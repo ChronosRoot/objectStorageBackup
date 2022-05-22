@@ -1,8 +1,9 @@
-package qiniu
+package obs
 
 import (
 	"context"
 	"fmt"
+	"objectStorageBackup/config"
 	"objectStorageBackup/utils"
 	"os"
 
@@ -11,7 +12,11 @@ import (
 )
 
 // func
-func OBSClient(accessKey string, secretKey string, bucket string) (upToken string) {
+func qiniuClient() (upToken string) {
+	config.SetConfig()
+	accessKey := config.Config.GetString("Qiniu.accessKey")
+	secretKey := config.Config.GetString("Qiniu.secretKey")
+	bucket := config.Config.GetString("Qiniu.bucket")
 	putPolicy := storage.PutPolicy{
 		Scope: bucket,
 	}
@@ -20,8 +25,8 @@ func OBSClient(accessKey string, secretKey string, bucket string) (upToken strin
 	return upToken
 }
 
-func UpLoadQiniu(accessKey, secretKey, bucket, localFilePath string) {
-	upToken := OBSClient(accessKey, secretKey, bucket)
+func QiniuUpLoad(localFilePath string) {
+	upToken := qiniuClient()
 	key := utils.UpLoadFileKey(localFilePath)
 
 	cfg := storage.Config{}
